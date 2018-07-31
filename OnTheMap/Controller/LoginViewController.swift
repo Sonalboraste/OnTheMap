@@ -38,11 +38,15 @@ class LoginViewController: UIViewController
         
         /* 2. Make the request */
         let _ = postToLogin(txtUsername.text!, strPassword: txtPassword.text!)
-        { (results, error) in
+        { (result, error) in
             
             if let error = error
             {
                 print(error)
+                performUIUpdatesOnMain
+                {
+                    self.showAlert(strTitle: "Error", strMessage: error.userInfo.values.first! as! String)
+                }
             }
             else
             {
@@ -50,31 +54,23 @@ class LoginViewController: UIViewController
                 {
                     print("navigate to next screen")
                     
+                    
+                    
                     let controller = self.storyboard!.instantiateViewController(withIdentifier: "OnTheMapNavigationController") as! UINavigationController
                     self.present(controller, animated: true, completion: nil)
                 }
                 
             }
         }
+    }
+    
+    func showAlert(strTitle:String,strMessage:String)
+    {
+        let alert = UIAlertController(title: strTitle, message: strMessage, preferredStyle: .alert)
         
+        alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
         
-//        //DO the request to udacity for login??????
-//        var request = URLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
-//        request.httpMethod = "POST"
-//        request.addValue("application/json", forHTTPHeaderField: "Accept")
-//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//        request.httpBody = "{\"udacity\": {\"username\": \"sonalboraste@gmail.com\", \"password\": \"softy1234\"}}".data(using: .utf8)
-//        let session = URLSession.shared
-//        let task = session.dataTask(with: request) { data, response, error in
-//            if error != nil { // Handle error…
-//                print("Sonal error found!!!")
-//                return
-//            }
-//            let range = Range(5..<data!.count)
-//            let newData = data?.subdata(in: range) /* subset response data! */
-//            print(String(data: newData!, encoding: .utf8)!)
-//        }
-//        task.resume()
+        self.present(alert, animated: true)
     }
     
     func postToLogin(_ strUserName: String, strPassword: String, completionHandlerForLogin: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void)
@@ -111,7 +107,7 @@ class LoginViewController: UIViewController
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error!)")
+                sendError("There was an error with your internet connection!")
                 return
             }
             
@@ -128,8 +124,7 @@ class LoginViewController: UIViewController
             }
             
             /* 5/6. Parse the data and use the data (happens in completion handler) */
-            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForLogin)
-            
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForLogin)            
             
         }
         
@@ -147,7 +142,23 @@ class LoginViewController: UIViewController
             let range = Range(5..<data.count)
             let newData = data.subdata(in: range) /* subset response data! */
             print(String(data: newData, encoding: .utf8)!)
+            
+            
             parsedResult = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as AnyObject
+            
+            
+            if let result = parsedResult?[UdacityClient.JSONResponseKeys.Account] as? [String:AnyObject]
+            {
+                /*Set the values of singleton account properties*/
+                _ = CurrentAccount.accountFromResult(result)
+                
+                completionHandlerForConvertData(parsedResult, nil)
+                
+            }
+            else
+            {
+                completionHandlerForConvertData(nil, NSError(domain: "getAccount", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getAccount"]))
+            }
         }
         catch
         {
@@ -155,7 +166,6 @@ class LoginViewController: UIViewController
             completionHandlerForConvertData(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
         }
         
-        completionHandlerForConvertData(parsedResult, nil)
     }
     
 

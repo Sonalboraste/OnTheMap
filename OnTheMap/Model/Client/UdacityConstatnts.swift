@@ -43,6 +43,8 @@ extension UdacityClient
         static let AccountKey = "key"
         static let SessionID = "id"
         static let SessionExpiration = "expiration"
+        static let Account = "account"
+        static let Session = "session"
         
         //MARK: Student Array
         static let StudentResults = "results"
@@ -56,6 +58,7 @@ extension UdacityClient
         static let StudentObjectID = "objectId"
         static let StudentUniqueKey = "uniqueKey"
         static let StudentUpdatedAt = "updatedAt"
+        
         
         
     }

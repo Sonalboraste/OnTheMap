@@ -29,6 +29,7 @@ struct StudentData
     // construct a StudentData from a dictionary
     init(dictionary: [String:AnyObject])
     {
+        
         createdAt = dictionary[UdacityClient.JSONResponseKeys.StudentCreatedAt] as! String
         
         if let fName = dictionary[UdacityClient.JSONResponseKeys.StudentFirstName] as? String
@@ -105,6 +106,60 @@ struct StudentData
         }
         
         return students
+    }
+    
+    static func singleStudentFromResults(_ results: [[String:AnyObject]]) -> StudentData
+    {
+        //?????Sort the result by createdAt and return the latest student location back
+        var student = StudentData(dictionary: results[0])
+        
+        
+        var students = [StudentData]()
+        
+        // iterate through array of dictionaries, each Student is a dictionary
+        for result in results
+        {
+            students.append(StudentData(dictionary: result))
+        }
+        
+        /* Next, the .sorted(by:) method returns a collection that compares
+           an element in the array against the next element and arranges the collection by date.
+           The sorted collection is assigned back to the students array
+          So, if student have multiple locations submitted then sort them by createdAt
+          and return the latest created location back.
+         */
+        
+        students = students.sorted(by: {
+            $0.createdAt.compare($1.createdAt) == .orderedDescending
+        })
+        
+       
+        
+        return students[0]
+    }
+    
+    
+    
+    // MARK: New Student Location - When User Adds a New Location
+    struct NewStudentLocation {
+        static var mapString = ""
+        static var mediaURL = ""
+        static var latitude = 0.0
+        static var longitude = 0.0
+    }
+    
+    
+    // Stores current student data
+    struct CurrentStudentData
+    {
+        static var uniqueKey = CurrentAccount.accountKey
+        static var firstName = "Hema"
+        static var lastName = "Rumba"
+        static var objectId = ""    // updated when there's a student location in Parse; used for PUT
+        static var latitude = 0.0
+        static var longitude = 0.0
+        static var mapString = ""
+        static var mediaURL = ""
     }
     
 }
