@@ -407,4 +407,65 @@ class UdacityClient: NSObject
         
     }
     
+    func taskForDeleteSession()
+    {
+        // Once you get a session ID using Udacity's API, you should delete the session ID to "logout". This is accomplished by using Udacity’s session method
+        var request = URLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
+        request.httpMethod = "DELETE"
+        var xsrfCookie: HTTPCookie? = nil
+        let sharedCookieStorage = HTTPCookieStorage.shared
+        for cookie in sharedCookieStorage.cookies! {
+            if cookie.name == "XSRF-TOKEN" { xsrfCookie = cookie }
+        }
+        if let xsrfCookie = xsrfCookie {
+            request.setValue(xsrfCookie.value, forHTTPHeaderField: "X-XSRF-TOKEN")
+        }
+        let session = URLSession.shared
+        let task = session.dataTask(with: request) { data, response, error in
+            if error != nil { // Handle error…
+                return
+            }
+            
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                print("Your Request Returned A Status Code Other Than 2xx!")
+                return
+            }
+            
+            /* GUARD: Was there any data returned? */
+            guard data != nil else {
+                print("No data was returned by the request!")
+                return
+            }
+            
+            let range = Range(5..<data!.count)
+            let newData = data?.subdata(in: range) /* subset response data! */
+            print(String(data: newData!, encoding: .utf8)!)
+            
+            print("User has Successfully Logged Out")
+            
+            // clear out all user data after successful logout
+            self.clearUserData()
+        }
+        task.resume()
+    }
+    
+    func clearUserData()
+    {
+        // clear out all user data after successful logout       
+        
+        StudentData.NewStudentLocation.latitude = 0.0
+        StudentData.NewStudentLocation.longitude = 0.0
+        StudentData.NewStudentLocation.mapString = ""
+        StudentData.NewStudentLocation.mediaURL = ""
+        
+        StudentData.CurrentStudentData.firstName = ""
+        StudentData.CurrentStudentData.lastName = ""
+        StudentData.CurrentStudentData.objectId = ""
+        StudentData.CurrentStudentData.uniqueKey = ""
+        StudentData.CurrentStudentData.mapString = ""
+        StudentData.CurrentStudentData.mediaURL = ""
+        
+    }
+
+    
 }

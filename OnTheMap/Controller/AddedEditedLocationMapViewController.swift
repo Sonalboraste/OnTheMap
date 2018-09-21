@@ -210,8 +210,11 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
                 print("Updated the exisitng student location")
                 performUIUpdatesOnMain
                 {
-                        self.createAlert(title: "Successfully", message: "Updated the existing location.")
-                    
+                    //self.createAlert(title: "Successfully", message: "Updated the existing location.")
+                    //add the current student to map
+                    //and load 100 students to the map????
+                    let controller = self.storyboard!.instantiateViewController(withIdentifier: "OnTheMapNavigationController") as! UINavigationController
+                    self.present(controller, animated: true, completion: nil)
                 }
             }
         })
@@ -247,15 +250,7 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
         })
         
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+    
     
     
     // MARK: Alert Views

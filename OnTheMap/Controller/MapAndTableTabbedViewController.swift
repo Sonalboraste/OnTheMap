@@ -24,13 +24,40 @@ class MapAndTableTabbedViewController: UIViewController, MKMapViewDelegate
     override func viewDidLoad()
     {
         super.viewDidLoad()
-
+        
         //Call the udacity parse API to get the student locations
         getStudentLocations()
         centerMapOnLocation(location: initialLocation)
     }
-
     
+    override func viewWillAppear(_ animated: Bool)
+    {
+        
+    }
+    
+    @IBAction func LogoutClicked(_ sender: Any)
+    {
+        print("nil the session");
+        
+        UdacityClient.sharedInstance().taskForDeleteSession()
+        
+        
+        
+        performUIUpdatesOnMain
+        {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+//    func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem)
+//    {
+//        if(item.tag == 0)//Logout
+//        {
+//            print("nil the session and dissmiss the controller")
+//            //Logout
+//            self.dismiss(animated: true, completion: nil)
+//        }
+//    }
     
     func centerMapOnLocation(location: CLLocation)
     {

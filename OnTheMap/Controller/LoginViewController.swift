@@ -56,7 +56,11 @@ class LoginViewController: UIViewController
                     
                     
                     
-                    let controller = self.storyboard!.instantiateViewController(withIdentifier: "OnTheMapNavigationController") as! UINavigationController
+                    /*let controller = self.storyboard!.instantiateViewController(withIdentifier: "OnTheMapNavigationController") as! UINavigationController
+                    self.present(controller, animated: true, completion: nil)*/
+                    
+                    
+                    let controller = self.storyboard!.instantiateViewController(withIdentifier: "OnTheMapTabController")
                     self.present(controller, animated: true, completion: nil)
                 }
                 
