@@ -11,6 +11,7 @@
 		572A631F209B3D410054D2A5 /* UdacityClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572A631E209B3D410054D2A5 /* UdacityClient.swift */; };
 		572A6321209B3E740054D2A5 /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 572A6320209B3E740054D2A5 /* GCDBlackBox.swift */; };
 		5759363420E985C100A267A4 /* CurrentAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5759363320E985C100A267A4 /* CurrentAccount.swift */; };
+		5759EF0E216096FE00F62AAC /* StudentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5759EF0D216096FE00F62AAC /* StudentModel.swift */; };
 		575D36C720989385002C24EA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575D36C620989385002C24EA /* AppDelegate.swift */; };
 		575D36C920989385002C24EA /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575D36C820989385002C24EA /* LoginViewController.swift */; };
 		575D36CC20989385002C24EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 575D36CA20989385002C24EA /* Main.storyboard */; };
@@ -20,6 +21,8 @@
 		575E4AB020A3DBF20042AD42 /* MapAndTableTabbedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575E4AAF20A3DBF20042AD42 /* MapAndTableTabbedViewController.swift */; };
 		575EED5E20ADAB9C00B3D4C1 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 575EED5D20ADAB9C00B3D4C1 /* TableViewController.swift */; };
 		5760347E20B6EE1100048B9E /* EnterLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5760347D20B6EE1100048B9E /* EnterLocationViewController.swift */; };
+		5760366C21586BF100BEDC93 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5760366B21586BF100BEDC93 /* MapViewController.swift */; };
+		5761877921618344001A84E9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5761877821618344001A84E9 /* SignUpViewController.swift */; };
 		5764E44920CDDE4F00CF31A4 /* AddedEditedLocationMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5764E44820CDDE4F00CF31A4 /* AddedEditedLocationMapViewController.swift */; };
 		576CA3532099ECCA000838D2 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 576CA3512099ECCA000838D2 /* LaunchScreen.xib */; };
 		57742D8620A8A58700A0BF3D /* StudentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57742D8520A8A58700A0BF3D /* StudentData.swift */; };
@@ -47,6 +50,7 @@
 		572A631E209B3D410054D2A5 /* UdacityClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UdacityClient.swift; sourceTree = "<group>"; };
 		572A6320209B3E740054D2A5 /* GCDBlackBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
 		5759363320E985C100A267A4 /* CurrentAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentAccount.swift; sourceTree = "<group>"; };
+		5759EF0D216096FE00F62AAC /* StudentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentModel.swift; sourceTree = "<group>"; };
 		575D36C320989385002C24EA /* OnTheMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnTheMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		575D36C620989385002C24EA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		575D36C820989385002C24EA /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -62,6 +66,8 @@
 		575E4AAF20A3DBF20042AD42 /* MapAndTableTabbedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapAndTableTabbedViewController.swift; sourceTree = "<group>"; };
 		575EED5D20ADAB9C00B3D4C1 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		5760347D20B6EE1100048B9E /* EnterLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterLocationViewController.swift; sourceTree = "<group>"; };
+		5760366B21586BF100BEDC93 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		5761877821618344001A84E9 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		5764E44820CDDE4F00CF31A4 /* AddedEditedLocationMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddedEditedLocationMapViewController.swift; sourceTree = "<group>"; };
 		576CA3522099ECCA000838D2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = "../../../../Library/Mobile Documents/com~apple~CloudDocs/Documents_mrunal_icloud/ios-nd-networking-master/TheMovieManagerComplete/TheMovieManager/Base.lproj/LaunchScreen.xib"; sourceTree = "<group>"; };
 		57742D8520A8A58700A0BF3D /* StudentData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentData.swift; sourceTree = "<group>"; };
@@ -174,9 +180,11 @@
 			children = (
 				575D36C820989385002C24EA /* LoginViewController.swift */,
 				575E4AAF20A3DBF20042AD42 /* MapAndTableTabbedViewController.swift */,
+				5760366B21586BF100BEDC93 /* MapViewController.swift */,
 				575EED5D20ADAB9C00B3D4C1 /* TableViewController.swift */,
 				5760347D20B6EE1100048B9E /* EnterLocationViewController.swift */,
 				5764E44820CDDE4F00CF31A4 /* AddedEditedLocationMapViewController.swift */,
+				5761877821618344001A84E9 /* SignUpViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -204,6 +212,7 @@
 			children = (
 				57742D8520A8A58700A0BF3D /* StudentData.swift */,
 				5759363320E985C100A267A4 /* CurrentAccount.swift */,
+				5759EF0D216096FE00F62AAC /* StudentModel.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -345,7 +354,10 @@
 				575EED5E20ADAB9C00B3D4C1 /* TableViewController.swift in Sources */,
 				572A631D209B3CD90054D2A5 /* UdacityConstatnts.swift in Sources */,
 				5759363420E985C100A267A4 /* CurrentAccount.swift in Sources */,
+				5759EF0E216096FE00F62AAC /* StudentModel.swift in Sources */,
 				57742D8620A8A58700A0BF3D /* StudentData.swift in Sources */,
+				5761877921618344001A84E9 /* SignUpViewController.swift in Sources */,
+				5760366C21586BF100BEDC93 /* MapViewController.swift in Sources */,
 				5764E44920CDDE4F00CF31A4 /* AddedEditedLocationMapViewController.swift in Sources */,
 				575D36C720989385002C24EA /* AppDelegate.swift in Sources */,
 				5760347E20B6EE1100048B9E /* EnterLocationViewController.swift in Sources */,

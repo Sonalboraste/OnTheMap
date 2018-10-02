@@ -29,8 +29,14 @@ struct StudentData
     // construct a StudentData from a dictionary
     init(dictionary: [String:AnyObject])
     {
-        
-        createdAt = dictionary[UdacityClient.JSONResponseKeys.StudentCreatedAt] as! String
+        if let createTime = dictionary[UdacityClient.JSONResponseKeys.StudentCreatedAt] as? String
+        {
+            createdAt = createTime
+        }
+        else
+        {
+            createdAt = "01/01/2000"
+        }
         
         if let fName = dictionary[UdacityClient.JSONResponseKeys.StudentFirstName] as? String
         {
@@ -90,8 +96,15 @@ struct StudentData
             uniqueKey = ""
         }
         
-        updatedAt = dictionary[UdacityClient.JSONResponseKeys.StudentUpdatedAt] as! String
         
+        if let updateTime = dictionary[UdacityClient.JSONResponseKeys.StudentUpdatedAt] as? String
+        {
+            updatedAt = updateTime
+        }
+        else
+        {
+            updatedAt = "01/01/2000"
+        }
         
     }
     
@@ -111,7 +124,7 @@ struct StudentData
     static func singleStudentFromResults(_ results: [[String:AnyObject]]) -> StudentData
     {
         //?????Sort the result by createdAt and return the latest student location back
-        var student = StudentData(dictionary: results[0])
+        _ = StudentData(dictionary: results[0])
         
         
         var students = [StudentData]()
@@ -160,6 +173,24 @@ struct StudentData
         static var longitude = 0.0
         static var mapString = ""
         static var mediaURL = ""
+        static var createdAt : String = ""
+        static var updatedAt : String = ""
     }
     
+    // MARK: User Location Dictionary
+    static var currentStudentDataDictionary : [String: AnyObject] = [
+        "objectId" : CurrentStudentData.objectId as AnyObject,
+        "uniqueKey": CurrentStudentData.uniqueKey as AnyObject,
+        "firstName": CurrentStudentData.firstName as AnyObject,
+        "lastName" : CurrentStudentData.lastName as AnyObject,
+        "latitude" : CurrentStudentData.latitude as AnyObject,
+        "mapString": CurrentStudentData.mapString as AnyObject,
+        "mediaURL": CurrentStudentData.mediaURL as AnyObject,
+        "createdAt": CurrentStudentData.mapString as AnyObject,
+        "updatedAt": CurrentStudentData.mediaURL as AnyObject
+    ]
+
+    
 }
+
+

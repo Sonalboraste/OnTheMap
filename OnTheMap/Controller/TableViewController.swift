@@ -13,7 +13,7 @@ class TableViewController : UIViewController
 {
     // This is an array of Students instances
     
-    var allStudents: [StudentData] = [StudentData]()
+   
     
     @IBOutlet weak var StudentTableView: UITableView!
     
@@ -21,34 +21,25 @@ class TableViewController : UIViewController
     {
         super.viewDidLoad()
         
-        // create and set the logout button
-        //parent!.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .reply, target: self, action: #selector(logout))
     }
     
-    override func viewWillAppear(_ animated: Bool)
+    override func viewDidAppear(_ animated: Bool)
     {
-        super.viewWillAppear(animated)
+        super.viewDidAppear(true)
         
-        UdacityClient.sharedInstance().getToStudentLocations(completionHandlerForStudentLocations:
-        { (students, error) in
-            
-            if let error = error
-            {
-                print(error)
-            }
-            else
-            {
-                self.allStudents = students!
-                
-                print(self.allStudents.count)
-                
-                performUIUpdatesOnMain
-                {
-                    print("Set the student data to tableview on MAP")
-                    self.StudentTableView.reloadData()
-                }
-            }
-        })
+        // put the refresh code here
+        // If you need to repeat them to update the data in the view controller, viewDidAppear(_:) is more appropriate to do so.
+        refreshTableView()
+
+    }
+   
+    // Refresh Table Data
+    func refreshTableView()
+    {
+        if let studentTableView = StudentTableView
+        {
+            studentTableView.reloadData()
+        }
     }
 }
 
@@ -56,14 +47,14 @@ extension TableViewController : UITableViewDelegate, UITableViewDataSource
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return allStudents.count
+        return StudentModel.sharedInstance().arrayOfStudentData.count
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "StudentCell")!
-        let student = allStudents[(indexPath as NSIndexPath).row]
+        let student = StudentModel.sharedInstance().arrayOfStudentData[(indexPath as NSIndexPath).row]
         
         // Set the name
         cell.textLabel?.text = student.firstName + " " + student.lastName
@@ -81,7 +72,7 @@ extension TableViewController : UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        guard let url = URL(string: allStudents[(indexPath as NSIndexPath).row].mediaURL) else {
+        guard let url = URL(string: StudentModel.sharedInstance().arrayOfStudentData[(indexPath as NSIndexPath).row].mediaURL) else {
             return //be safe
         }
         

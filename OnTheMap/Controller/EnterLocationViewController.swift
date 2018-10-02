@@ -27,7 +27,9 @@ class EnterLocationViewController: UIViewController
     
     @IBAction func cancelAddLocation(_ sender: Any)
     {
-        navigationController?.popToRootViewController(animated: true)
+        LocationTextField.text = ""
+        WebsiteLinkTextField.text = ""
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction func OnFindLocationClicked(_ sender: Any)
@@ -90,6 +92,13 @@ class EnterLocationViewController: UIViewController
         nextViewController.latitude = Float((loc!.coordinate.latitude))
         nextViewController.longitude = Float((loc!.coordinate.longitude))
         nextViewController.mediaURL = (WebsiteLinkTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines))!
+        
+        
+        // store user's new location and url in struct
+        StudentData.NewStudentLocation.mapString = LocationTextField.text!
+        StudentData.NewStudentLocation.mediaURL =  (WebsiteLinkTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines))!
+        StudentData.NewStudentLocation.latitude = (loc!.coordinate.latitude)
+        StudentData.NewStudentLocation.longitude = (loc!.coordinate.longitude)
         
     }
         

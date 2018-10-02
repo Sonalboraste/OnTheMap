@@ -16,9 +16,8 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
     var longitude : Float = 0.0
     var mediaURL : String = ""
     
-    var currentStudent : StudentData!
     
-    var userObjectId = StudentData.CurrentStudentData.objectId //d5oWV0RxIH  objectID    String    "d5oWV0RxIH"
+    var userObjectId = StudentData.CurrentStudentData.objectId //d5oWV0RxIH  objectID    String
     
     
     @IBOutlet weak var mapVIew: MKMapView!
@@ -31,16 +30,33 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
         mapVIew.delegate = self
         
         print("____In Add Location Map____")
+        let newStudentData = NewStudentLocationData()
         
         centerMapOnNewLocation()
         
-        setAnnotationForNewLocation()
-        
+        setAnnotationForNewLocation(newStudentData: newStudentData)        
         
         
         // Do any additional setup after loading the view.
     }
 
+    func NewStudentLocationData() -> [[String : Any]] {
+        return  [
+            [
+                "createdAt" : "",
+                "firstName" : StudentData.CurrentStudentData.firstName,
+                "lastName" : StudentData.CurrentStudentData.lastName,
+                "latitude" : StudentData.NewStudentLocation.latitude,
+                "longitude" : StudentData.NewStudentLocation.longitude,
+                "mapString" : StudentData.NewStudentLocation.mapString,
+                "mediaURL" : StudentData.NewStudentLocation.mediaURL,
+                "objectId" : "",
+                "uniqueKey" : StudentData.CurrentStudentData.uniqueKey,
+                "updatedAt" : ""
+            ]
+        ]
+    }
+    
     func centerMapOnNewLocation()
     {
         
@@ -53,25 +69,37 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
         
     }
     
-    func setAnnotationForNewLocation()
+    func setAnnotationForNewLocation(newStudentData : [[String : Any]])
     {
         var annotations = [MKPointAnnotation]()
         
-        let newLocation = CLLocation(latitude: CLLocationDegrees(self.latitude), longitude: CLLocationDegrees(self.longitude))
-        
-        // Here we create the annotation and set its coordiate, title, and subtitle properties
-        let annotation = MKPointAnnotation()
-        
-        annotation.coordinate = newLocation.coordinate        
-        annotation.title = "\("Sonal") \("Boraste")" //??? Change this to use current user's first name and last name
-        annotation.subtitle = self.mediaURL
-        
-        // Add the annotation in an array of annotations.
-        annotations.append(annotation)
+        for newStudent in newStudentData
+        {
+            
+            // Notice that the float values are being used to create CLLocationDegree values.
+            // This is a version of the Double type.
+            let lat = CLLocationDegrees(newStudent["latitude"] as! Double)
+            let long = CLLocationDegrees(newStudent["longitude"] as! Double)
+            
+            // The lat and long are used to create a CLLocationCoordinates2D instance.
+            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            
+            let first = newStudent["firstName"] as! String
+            let last = newStudent["lastName"] as! String
+            let mediaURL = newStudent["mediaURL"] as! String
+            
+            // Here we create the annotation and set its coordiate, title, and subtitle properties
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            annotation.title = "\(first) \(last)"
+            annotation.subtitle = mediaURL
+            
+            // Finally we place the annotation in an array of annotations.
+            annotations.append(annotation)
+        }
         
         // When the array is complete, we add the annotations to the map.
         self.mapVIew.addAnnotations(annotations)
-        
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?
@@ -100,9 +128,9 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
         //Check if user is already there using getStudentLocation using uniqueKey that you get from postSession and save that in global variable in .swift class
         //If user location not exist then post the user(your) location to server using post method and uniqueKey
         //If user location exist then update the location using put method and using objectId got from getStudentLocation
-        //if successful go back to map/tableview???
+        //if successful go back to map/tableview
         
-        //if failed show the alert to the user???
+        //if failed show the alert to the user
         /*
          - if one exists, what did you do?
          - if several exists, which one do you consistently choose to use and update?
@@ -110,23 +138,7 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
          - if there's no student location for the app user, what did you do?
          */
         
-        getACurrentAccountStudentLocation()
-        
-        /*if(IsStudentLocationExist())
-        {
-            //Update the latest student location
-            //UpdateExistingStudentLocation()
-        }
-        else
-        {
-            //Add new student location
-            //CreateNewStudentLocation()
-        }*/
-    }
-    
-    func IsStudentLocationExist()
-    {
-        if currentStudent != nil
+        if StudentData.CurrentStudentData.objectId != ""
         {
             print("UPDATE EXISTING LOCATION")
             //Update the latest student location
@@ -139,8 +151,8 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
             //Post new student location
             CreateNewStudentLocation()
         }
-        
     }
+    
     
     func CreateNewStudentLocation()
     {
@@ -161,39 +173,18 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
             else
             {
                 print("Posted the new student location")
-                performUIUpdatesOnMain
-                {
-                    self.createAlert(title: "Successfully", message: "Posted the new location.")
-                    
-                    //????Load the map with new location of the student
-                }
+                /*Get current student Location*/
+                self.getACurrentAccountStudentLocation()
+                
             }
         })
         
-        //-------------------------------------------------------------------------
-        //PostMethod
-//        print("Post the location to server")
-//        var request = URLRequest(url: URL(string: "https://parse.udacity.com/parse/classes/StudentLocation")!)
-//        request.httpMethod = "POST"
-//        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
-//        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
-//        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-//        //???Do not post your name and location to the map????
-//        request.httpBody = "{\"uniqueKey\": \"1234\", \"firstName\": \"Hema\", \"lastName\": \"Runai\",\"mapString\": \"Arlington Heights, IL\", \"mediaURL\": \"https://google.com\",\"latitude\": 42.081253, \"longitude\": -87.980473}".data(using: .utf8)
-//        let session = URLSession.shared
-//        let task = session.dataTask(with: request) { data, response, error in
-//            if error != nil { // Handle error…
-//                return
-//            }
-//            print(String(data: data!, encoding: .utf8)!)
-//        }
-//        task.resume()
     }
     
     func UpdateExistingStudentLocation()
     {
         
-        let _ = UdacityClient.sharedInstance().putToExistingStudentLocation(objectIDOfCurrentStudent: currentStudent.objectID,updatedMapString: location, updatedMediaURL: mediaURL, updatedLatitude: latitude, updatedLongitude: longitude, completionHandlerForPutToExistingStudentLocation:
+        let _ = UdacityClient.sharedInstance().putToExistingStudentLocation(objectIDOfCurrentStudent: StudentData.CurrentStudentData.objectId,updatedMapString: location, updatedMediaURL: mediaURL, updatedLatitude: latitude, updatedLongitude: longitude, completionHandlerForPutToExistingStudentLocation:
         { (success, error) in
             
             if let error = error
@@ -208,14 +199,20 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
             else
             {
                 print("Updated the exisitng student location")
-                performUIUpdatesOnMain
-                {
-                    //self.createAlert(title: "Successfully", message: "Updated the existing location.")
-                    //add the current student to map
-                    //and load 100 students to the map????
-                    let controller = self.storyboard!.instantiateViewController(withIdentifier: "OnTheMapNavigationController") as! UINavigationController
-                    self.present(controller, animated: true, completion: nil)
-                }
+                
+                /*Get current student Location*/
+                self.getACurrentAccountStudentLocation()
+                
+//                performUIUpdatesOnMain
+//                {
+//                    //self.createAlert(title: "Successfully", message: "Updated the existing location.")
+//                    //add the current student to map
+//                    //and load 100 students to the map????
+//                    let controller = self.storyboard!.instantiateViewController(withIdentifier: "OnTheMapNavigationController") as! UINavigationController
+//                    self.present(controller, animated: true, completion: nil)
+//                }
+                
+               
             }
         })
         
@@ -234,24 +231,49 @@ class AddedEditedLocationMapViewController: UIViewController, MKMapViewDelegate
                 if(error.code==10)
                 {
                     print("No data has been posted by a student")
-                    self.IsStudentLocationExist()
+                    
                 }
             }
             else
-            {
-                print("set the CurrentStudent Object")
-                performUIUpdatesOnMain
-                {
-                    self.currentStudent = student
-                    
-                    self.IsStudentLocationExist()
-                }
+            {               
+                
+                //set the value of current student
+                print("Successfully got the CurrentStudent Object")
+                /*Get 100 student Locations*/
+                self.getStudentLocations()
+                
             }
         })
         
     }
     
     
+    func getStudentLocations()
+    {
+        /* 2. Make the request */
+        let _ = UdacityClient.sharedInstance().getToStudentLocations(completionHandlerForStudentLocations:
+        { (success, error) in
+            
+            if let error = error
+            {
+                print(error)
+            }
+            else
+            {
+                print("Succesfully got 101 student locations")
+                
+                
+                performUIUpdatesOnMain
+                {
+                        self.createAlert(title: "Successfully", message: "Posted the new location.")
+
+                        // After all are successful, go back to map/tableview                    
+                }
+                
+                self.dismiss(animated: true, completion: nil)
+            }
+        })
+    }
     
     // MARK: Alert Views
     func createAlert(title: String, message: String)

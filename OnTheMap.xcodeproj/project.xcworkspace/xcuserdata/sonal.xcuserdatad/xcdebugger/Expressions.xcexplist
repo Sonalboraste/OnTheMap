@@ -3,18 +3,46 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "UdacityClient.putToExistingStudentLocation(objectIDOfCurrentStudent:updatedMapString:updatedMediaURL:updatedLatitude:updatedLongitude:completionHandlerForPutToExistingStudentLocation:):UdacityClient.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "StudentData.CurrentStudentData.objectId">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "closure #1 in closure #1 in LoginViewController.loginPressed(_:):LoginViewController.swift">
          <PersistentStrings>
             <PersistentString
                value = "error.userInfo.values.first! as! String">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "static StudentData.singleStudentFromResults(_:):StudentData.swift">
+      </ContextState>
+      <ContextState
+         contextName = "StudentData.init(dictionary:):StudentData.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "dictionary[UdacityClient.JSONResponseKeys.StudentCreatedAt] as! Date?">
+            </PersistentString>
+            <PersistentString
+               value = "df.date(from: dictionary[UdacityClient.JSONResponseKeys.StudentCreatedAt] as! String)!">
+            </PersistentString>
+            <PersistentString
+               value = "dictionary[UdacityClient.JSONResponseKeys.StudentCreatedAt]">
+            </PersistentString>
+            <PersistentString
+               value = "createdAt">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "TableViewController.tableView(_:numberOfRowsInSection:):TableViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "StudentModel.sharedInstance().arrayOfStudentData">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "UdacityClient.convertDataToStudentArray(_:completionHandlerForStudentsArray:):UdacityClient.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "StudentModel.sharedInstance().arrayOfStudentData">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -27,22 +55,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "static StudentData.singleStudentFromResults(_:):StudentData.swift">
-      </ContextState>
-      <ContextState
-         contextName = "StudentData.init(dictionary:):StudentData.swift">
+         contextName = "UdacityClient.putToExistingStudentLocation(objectIDOfCurrentStudent:updatedMapString:updatedMediaURL:updatedLatitude:updatedLongitude:completionHandlerForPutToExistingStudentLocation:):UdacityClient.swift">
          <PersistentStrings>
             <PersistentString
-               value = "createdAt">
-            </PersistentString>
-            <PersistentString
-               value = "df.date(from: dictionary[UdacityClient.JSONResponseKeys.StudentCreatedAt] as! String)!">
-            </PersistentString>
-            <PersistentString
-               value = "dictionary[UdacityClient.JSONResponseKeys.StudentCreatedAt]">
-            </PersistentString>
-            <PersistentString
-               value = "dictionary[UdacityClient.JSONResponseKeys.StudentCreatedAt] as! Date?">
+               value = "StudentData.CurrentStudentData.objectId">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

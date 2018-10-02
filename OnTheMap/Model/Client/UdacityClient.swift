@@ -21,7 +21,107 @@ class UdacityClient: NSObject
         return Singleton.sharedInstance
     }
     
-    func getToStudentLocations(completionHandlerForStudentLocations: @escaping (_ result: [StudentData]?, _ error: NSError?) -> Void)
+    
+    func postToLogin(_ strUserName: String, strPassword: String, completionHandlerForLogin: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void)
+    {
+        
+        /* 1. Specify parameters, method (if has {key}), and HTTP body (if POST) */
+        let parameterValue = [UdacityClient.SubParameterKeys.UdacityUsername : strUserName,
+                              UdacityClient.SubParameterKeys.UdacityPassword: strPassword]
+        
+        _ = [UdacityClient.ParameterKeys.AccountUdacity : parameterValue]
+        
+        let jsonBody = "{\"\(UdacityClient.ParameterKeys.AccountUdacity)\": {\"\(UdacityClient.SubParameterKeys.UdacityUsername)\": \"\(strUserName)\", \"\(UdacityClient.SubParameterKeys.UdacityPassword)\": \"\(strPassword)\"}}"
+        
+        
+        /* 2/3. Build the URL, Configure the request */
+        var request = URLRequest(url: URL(string: UdacityClient.Constants.AccountLoginURL)!)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonBody.data(using: .utf8)
+        
+        /* 4. Make the request */
+        let session = URLSession.shared
+        let task = session.dataTask(with: request as URLRequest)
+        { (data, response, error) in
+            
+            
+            func sendError(_ error: String)
+            {
+                print(error)
+                let userInfo = [NSLocalizedDescriptionKey : error]
+                completionHandlerForLogin(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
+            }
+            
+            
+            /* GUARD: Was there an error? */
+            guard (error == nil) else {
+                sendError("There was an error with your internet connection!")
+                return
+            }
+            
+            /* GUARD: Did we get a successful 2XX response? */
+            guard let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode >= 200 && statusCode <= 299 else {
+                sendError("Your request returned a status code other than 2xx!")
+                return
+            }
+            
+            /* GUARD: Was there any data returned? */
+            guard let data = data else {
+                sendError("No data was returned by the request!")
+                return
+            }
+            
+            /* 5/6. Parse the data and use the data (happens in completion handler) */
+            self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForLogin)
+            
+        }
+        
+        /* 7. Start the request */
+        task.resume()
+    }
+    
+    // given raw JSON, return a usable Foundation object
+    private func convertDataWithCompletionHandler(_ data: Data, completionHandlerForConvertData: (_ result: AnyObject?, _ error: NSError?) -> Void)
+    {
+        
+        var parsedResult: AnyObject! = nil
+        do
+        {
+            let range = Range(5..<data.count)
+            let newData = data.subdata(in: range) /* subset response data! */
+            print(String(data: newData, encoding: .utf8)!)
+            
+            
+            parsedResult = try JSONSerialization.jsonObject(with: newData, options: .allowFragments) as AnyObject
+            
+            
+            if let result = parsedResult?[UdacityClient.JSONResponseKeys.Account] as? [String:AnyObject]
+            {
+                /*Set the values of singleton account properties*/
+                _ = CurrentAccount.accountFromResult(result)
+                
+                completionHandlerForConvertData(parsedResult, nil)
+                
+            }
+            else
+            {
+                completionHandlerForConvertData(nil, NSError(domain: "getAccount", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getAccount"]))
+            }
+        }
+        catch
+        {
+            let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
+            completionHandlerForConvertData(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
+        }
+        
+    }
+    
+    
+    
+    
+    func getToStudentLocations(completionHandlerForStudentLocations: @escaping (_ success:Bool, _ error: NSError?) -> Void)
     {
         
         /* 1. Specify parameters, method (if has {key}), and HTTP body (if POST) */
@@ -42,7 +142,7 @@ class UdacityClient: NSObject
             {
                 print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForStudentLocations(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
+                completionHandlerForStudentLocations(false, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
             }
             
             
@@ -77,39 +177,68 @@ class UdacityClient: NSObject
     
     
     // given raw JSON, return a usable Foundation object
-    func convertDataToStudentArray(_ data: Data, completionHandlerForStudentsArray: (_ result: [StudentData]?, _ error: NSError?) -> Void)
+    func convertDataToStudentArray(_ data: Data, completionHandlerForStudentsArray: (_ success:Bool, _ error: NSError?) -> Void)
     {
         var parsedResult: AnyObject! = nil
         do
         {
-            print(String(data: data, encoding: .utf8)!)
+            //print(String(data: data, encoding: .utf8)!)
             parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as AnyObject
             
             
             if let results = parsedResult?[UdacityClient.JSONResponseKeys.StudentResults] as? [[String:AnyObject]]
             {
                 
-                let students = StudentData.studentsFromResults(results)
+               // let students = StudentData.studentsFromResults(results)
+                
+                var arrayOfLocationsDictionaries = results
+                
+                // clear out all user data after successful logout
+                StudentModel.sharedInstance().arrayOfStudentData = []
+                //Check if a user location exists, if yes, add it to the 100 student locations. If a user location does not exist, then do not add user location to 100 student locations.
+                guard StudentData.CurrentStudentData.objectId != "" else
+                {
+                    
+                    // objectId == "", ignore currentStudentDate and go straight to inputting 100 student
+                    
+                    
+                    // MARK: Store 100 Student Locations (User has not posted a location yet)
+                    StudentModel.sharedInstance().arrayOfStudentData = StudentData.studentsFromResults(arrayOfLocationsDictionaries)
+                    
+                    // Only completionHander that sets 'data' to 'true'
+                    completionHandlerForStudentsArray(true, nil)
+                    return
+                }
+                
+                // StudentData.CurrentStudentData.objectId exists, append 1 CurrentStudentData to 100 students array
+               
+                arrayOfLocationsDictionaries.insert(StudentData.currentStudentDataDictionary, at: 0)
+                
+                //  MARK: Store 101 Student locations (includes 1 User Location)
+                StudentModel.sharedInstance().arrayOfStudentData = StudentData.studentsFromResults(arrayOfLocationsDictionaries)
+                // create constants to prep for refreshing the two view controllers
                 
                 
-                completionHandlerForStudentsArray(students, nil)
+                
+                
+                completionHandlerForStudentsArray(true, nil)
                 
             }
             else
             {
-                completionHandlerForStudentsArray(nil, NSError(domain: "getStudents", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudents"]))
+                completionHandlerForStudentsArray(false, NSError(domain: "getStudents", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudents"]))
             }
         }
         catch
         {
             let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
-            completionHandlerForStudentsArray(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
+            completionHandlerForStudentsArray(false, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
         }
     }
     
     
     
-    func getToASingleStudentLocation(completionHandlerForASingleStudentLocation: @escaping (_ result: StudentData?, _ error: NSError?) -> Void)
+    func getToASingleStudentLocation(completionHandlerForASingleStudentLocation: @escaping (_ success:Bool, _ error: NSError?) -> Void)
     {
         
         /* 1. Specify parameters, method (if has {key}), and HTTP body (if POST) */
@@ -135,7 +264,7 @@ class UdacityClient: NSObject
             {
                 print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
-                completionHandlerForASingleStudentLocation(nil, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
+                completionHandlerForASingleStudentLocation(false, NSError(domain: "taskForGETMethod", code: 1, userInfo: userInfo))
             }
             
             
@@ -169,7 +298,7 @@ class UdacityClient: NSObject
 
     
     // given raw JSON, return a usable Foundation object
-    func convertDataToStudent(_ data: Data, completionHandlerForASingleStudentLocation: (_ result: StudentData?, _ error: NSError?) -> Void)
+    func convertDataToStudent(_ data: Data, completionHandlerForASingleStudentLocation: (_ success:Bool, _ error: NSError?) -> Void)
     {
         var parsedResult: AnyObject! = nil
         do
@@ -185,23 +314,61 @@ class UdacityClient: NSObject
                 {
                     let currentStudent = StudentData.singleStudentFromResults(results)
                     
-                    completionHandlerForASingleStudentLocation(currentStudent, nil)
+                    // Store data into StudentData.CurrentStudentData
+                   
+                    print("results[0] parsed 'firstName: \(StudentData.CurrentStudentData.firstName)")
+                    StudentData.CurrentStudentData.firstName = currentStudent.firstName
+                    print("results[0] parsed 'firstName: \(StudentData.CurrentStudentData.firstName)")
+                    
+                    print("results[0] parsed 'lastName: \(StudentData.CurrentStudentData.lastName)")
+                    StudentData.CurrentStudentData.lastName = currentStudent.lastName
+                    print("results[0] parsed 'lastName: \(StudentData.CurrentStudentData.lastName)")
+                    
+                    print("results[0] parsed 'objectID: \(StudentData.CurrentStudentData.objectId)")
+                    StudentData.CurrentStudentData.objectId = currentStudent.objectID
+                    print("results[0] parsed 'objectID: \(StudentData.CurrentStudentData.objectId)")
+                    
+                    print("results[0] parsed 'mapString: \(StudentData.CurrentStudentData.mapString)")
+                    StudentData.CurrentStudentData.mapString = currentStudent.mapString
+                    print("results[0] parsed 'mapString: \(StudentData.CurrentStudentData.mapString)")
+                    
+                    print("results[0] parsed 'mediaURL: \(StudentData.CurrentStudentData.mediaURL)")
+                    StudentData.CurrentStudentData.mediaURL = currentStudent.mediaURL
+                    print("results[0] parsed 'mediaURL: \(StudentData.CurrentStudentData.mediaURL)")
+                    
+                    print("results[0] parsed 'lat: \(StudentData.CurrentStudentData.latitude)")
+                    StudentData.CurrentStudentData.latitude = Double(currentStudent.latitude)
+                    print("results[0] parsed 'lat: \(StudentData.CurrentStudentData.latitude)")
+                    
+                    print("results[0] parsed 'long: \(StudentData.CurrentStudentData.longitude)")
+                    StudentData.CurrentStudentData.longitude = Double(currentStudent.longitude)
+                    print("results[0] parsed 'long: \(StudentData.CurrentStudentData.longitude)")
+                    
+                    print("results[0] parsed 'createdAt: \(StudentData.CurrentStudentData.createdAt)")
+                    StudentData.CurrentStudentData.createdAt = currentStudent.createdAt
+                    print("results[0] parsed 'createdAt: \(StudentData.CurrentStudentData.createdAt)")
+                    
+                    print("results[0] parsed 'updatedAt: \(StudentData.CurrentStudentData.updatedAt)")
+                    StudentData.CurrentStudentData.updatedAt = currentStudent.updatedAt
+                    print("results[0] parsed 'updatedAt: \(StudentData.CurrentStudentData.updatedAt)")
+                    
+                    completionHandlerForASingleStudentLocation(true, nil)
                 }
                 else
                 {
-                    completionHandlerForASingleStudentLocation(nil, NSError(domain: "getAStudent", code: 10, userInfo: [NSLocalizedDescriptionKey: "No data has been posted by a student"]))
+                    completionHandlerForASingleStudentLocation(false, NSError(domain: "getAStudent", code: 10, userInfo: [NSLocalizedDescriptionKey: "No data has been posted by a student"]))
                 }
                 
             }
             else
             {
-                completionHandlerForASingleStudentLocation(nil, NSError(domain: "getAStudent", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudent"]))
+                completionHandlerForASingleStudentLocation(false, NSError(domain: "getAStudent", code: 0, userInfo: [NSLocalizedDescriptionKey: "Could not parse getStudent"]))
             }
         }
         catch
         {
             let userInfo = [NSLocalizedDescriptionKey : "Could not parse the data as JSON: '\(data)'"]
-            completionHandlerForASingleStudentLocation(nil, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
+            completionHandlerForASingleStudentLocation(false, NSError(domain: "convertDataWithCompletionHandler", code: 1, userInfo: userInfo))
         }
     }    
     
@@ -298,29 +465,7 @@ class UdacityClient: NSObject
     func putToExistingStudentLocation(objectIDOfCurrentStudent : String,updatedMapString: String, updatedMediaURL: String, updatedLatitude: Float, updatedLongitude: Float, completionHandlerForPutToExistingStudentLocation: @escaping (_ success:Bool, _ error:NSError?) -> Void)
     {
         //PutMethod
-        //        let urlString = "https://parse.udacity.com/parse/classes/StudentLocation/8ZExGR5uX8"
-        //        let url = URL(string: urlString)
-        //        var request = URLRequest(url: url!)
-        //        request.httpMethod = "PUT"
-        //        request.addValue("QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr", forHTTPHeaderField: "X-Parse-Application-Id")
-        //        request.addValue("QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY", forHTTPHeaderField: "X-Parse-REST-API-Key")
-        //        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        //        request.httpBody = "{\"uniqueKey\": \"1234\", \"firstName\": \"John\", \"lastName\": \"Doe\",\"mapString\": \"Cupertino, CA\", \"mediaURL\": \"https://udacity.com\",\"latitude\": 37.322998, \"longitude\": -122.032182}".data(using: .utf8)
-        //        let session = URLSession.shared
-        //        let task = session.dataTask(with: request) { data, response, error in
-        //            if error != nil { // Handle error…
-        //                return
-        //            }
-        //            print(String(data: data!, encoding: .utf8)!)
-        //        }
-        //        task.resume()
         
-        
-        
-        
-        
-        
-        //PostMethod
         print("Put/update the location to server")
         var request = URLRequest(url: URL(string: "https://parse.udacity.com/parse/classes/StudentLocation/"+objectIDOfCurrentStudent)!)
         request.httpMethod = "PUT"
@@ -364,7 +509,7 @@ class UdacityClient: NSObject
             }
             
             /* 5/6. Parse the data and use the data (happens in completion handler) */
-            //????
+            
             print(String(data: data, encoding: .utf8)!)
             
             /* 5/6. Parse the data and use the data (happens in completion handler) */
@@ -451,6 +596,9 @@ class UdacityClient: NSObject
     
     func clearUserData()
     {
+        // clear out all user data after successful logout
+        StudentModel.sharedInstance().arrayOfStudentData = []
+        
         // clear out all user data after successful logout       
         
         StudentData.NewStudentLocation.latitude = 0.0
@@ -465,6 +613,7 @@ class UdacityClient: NSObject
         StudentData.CurrentStudentData.mapString = ""
         StudentData.CurrentStudentData.mediaURL = ""
         
+        StudentData.currentStudentDataDictionary = [:]
     }
 
     
