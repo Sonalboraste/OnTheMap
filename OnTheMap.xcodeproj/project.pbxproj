@@ -24,7 +24,6 @@
 		5760366C21586BF100BEDC93 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5760366B21586BF100BEDC93 /* MapViewController.swift */; };
 		5761877921618344001A84E9 /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5761877821618344001A84E9 /* SignUpViewController.swift */; };
 		5764E44920CDDE4F00CF31A4 /* AddedEditedLocationMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5764E44820CDDE4F00CF31A4 /* AddedEditedLocationMapViewController.swift */; };
-		576CA3532099ECCA000838D2 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 576CA3512099ECCA000838D2 /* LaunchScreen.xib */; };
 		57742D8620A8A58700A0BF3D /* StudentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57742D8520A8A58700A0BF3D /* StudentData.swift */; };
 /* End PBXBuildFile section */
 
@@ -69,7 +68,6 @@
 		5760366B21586BF100BEDC93 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		5761877821618344001A84E9 /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		5764E44820CDDE4F00CF31A4 /* AddedEditedLocationMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddedEditedLocationMapViewController.swift; sourceTree = "<group>"; };
-		576CA3522099ECCA000838D2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = "../../../../Library/Mobile Documents/com~apple~CloudDocs/Documents_mrunal_icloud/ios-nd-networking-master/TheMovieManagerComplete/TheMovieManager/Base.lproj/LaunchScreen.xib"; sourceTree = "<group>"; };
 		57742D8520A8A58700A0BF3D /* StudentData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -193,7 +191,6 @@
 			isa = PBXGroup;
 			children = (
 				575D36CA20989385002C24EA /* Main.storyboard */,
-				576CA3512099ECCA000838D2 /* LaunchScreen.xib */,
 				575D36CD20989386002C24EA /* Assets.xcassets */,
 			);
 			path = Assets;
@@ -321,7 +318,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				576CA3532099ECCA000838D2 /* LaunchScreen.xib in Resources */,
 				575D36CE20989386002C24EA /* Assets.xcassets in Resources */,
 				575D36CC20989385002C24EA /* Main.storyboard in Resources */,
 			);
@@ -403,14 +399,6 @@
 				575D36CB20989385002C24EA /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		576CA3512099ECCA000838D2 /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				576CA3522099ECCA000838D2 /* Base */,
-			);
-			name = LaunchScreen.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
